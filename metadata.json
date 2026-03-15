@@ -1,0 +1,8 @@
+{
+  "name": "Studyholic",
+  "description": "A modern, AI-powered HSC study companion with personalized routines, AI tutoring, and comprehensive syllabus coverage.",
+  "requestFramePermissions": [
+    "microphone",
+    "camera"
+  ]
+}
