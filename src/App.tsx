@@ -52,7 +52,11 @@ import {
   startFeynmanTechnique,
   evaluateFeynmanExplanation,
   getPrivateTutorResponse
-} from './services/geminiService';
+} from './services/geminiService';// ডেমো অ্যাকাউন্ট চিরতরে রিমুভ করার জন্য
+useEffect(() => {
+  localStorage.clear();
+  sessionStorage.clear();
+}, []);
 import ReactMarkdown from 'react-markdown';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
