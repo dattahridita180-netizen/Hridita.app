@@ -52,22 +52,7 @@ import {
   startFeynmanTechnique,
   evaluateFeynmanExplanation,
   getPrivateTutorResponse
-} from './services/geminiService';// ডেমো অ্যাকাউন্ট চিরতরে রিমুভ করার জন্য
-// ... আপনার সব import গুলো এখানে থাকবে
-
-const App = () => { // আপনার মেইন কম্পোনেন্ট ফাংশনটি শুরু হচ্ছে
-  
-  // এইuseEffect টি এখানে থাকবে (ফাংশনের ভেতরে)
-  useEffect(() => {
-    localStorage.clear();
-    sessionStorage.clear();
-  }, []);
-
-  // ... আপনার বাকি সব কোড (return ইত্যাদি) এর নিচে থাকবে
-  return (
-    // ...
-  );
-}
+} from './services/geminiService';
 import ReactMarkdown from 'react-markdown';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
@@ -85,7 +70,21 @@ import {
 } from 'recharts';
 
 // --- Components ---
+// আপনার ইমপোর্টগুলো উপরে আছে (সেগুলো ওখানেই থাকুক)
 
+const Sidebar = ({ activeTab, setActiveTab, isOpen, setIsOpen }) => {
+  // useEffect টি অবশ্যই এই ফাংশনের ভেতরে থাকবে
+  useEffect(() => {
+    localStorage.clear();
+    sessionStorage.clear();
+  }, []);
+
+  // এখন আপনার বাকি Sidebar এর কোডগুলো এখানে লিখুন
+  const menuItems = [ ... ];
+  return (
+    // ... আপনার রিটার্ন কোড
+  );
+};
 const Sidebar = ({ activeTab, setActiveTab, isOpen, setIsOpen, language, setLanguage }: any) => {
   const menuItems = [
     { id: 'home', icon: Home, label: language === 'en' ? 'Home' : 'হোম' },
