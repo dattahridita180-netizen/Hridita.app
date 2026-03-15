@@ -53,10 +53,21 @@ import {
   evaluateFeynmanExplanation,
   getPrivateTutorResponse
 } from './services/geminiService';// ডেমো অ্যাকাউন্ট চিরতরে রিমুভ করার জন্য
-useEffect(() => {
-  localStorage.clear();
-  sessionStorage.clear();
-}, []);
+// ... আপনার সব import গুলো এখানে থাকবে
+
+const App = () => { // আপনার মেইন কম্পোনেন্ট ফাংশনটি শুরু হচ্ছে
+  
+  // এইuseEffect টি এখানে থাকবে (ফাংশনের ভেতরে)
+  useEffect(() => {
+    localStorage.clear();
+    sessionStorage.clear();
+  }, []);
+
+  // ... আপনার বাকি সব কোড (return ইত্যাদি) এর নিচে থাকবে
+  return (
+    // ...
+  );
+}
 import ReactMarkdown from 'react-markdown';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
