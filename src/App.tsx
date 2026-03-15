@@ -70,22 +70,12 @@ import {
 } from 'recharts';
 
 // --- Components ---
-// আপনার ইমপোর্টগুলো উপরে আছে (সেগুলো ওখানেই থাকুক)
 
-const Sidebar = ({ activeTab, setActiveTab, isOpen, setIsOpen }) => {
-  // useEffect টি অবশ্যই এই ফাংশনের ভেতরে থাকবে
+const Sidebar = ({ activeTab, setActiveTab, isOpen, setIsOpen, language, setLanguage }: any) => {
   useEffect(() => {
     localStorage.clear();
     sessionStorage.clear();
   }, []);
-
-  // এখন আপনার বাকি Sidebar এর কোডগুলো এখানে লিখুন
-  const menuItems = [ ... ];
-  return (
-    // ... আপনার রিটার্ন কোড
-  );
-};
-const Sidebar = ({ activeTab, setActiveTab, isOpen, setIsOpen, language, setLanguage }: any) => {
   const menuItems = [
     { id: 'home', icon: Home, label: language === 'en' ? 'Home' : 'হোম' },
     { id: 'dashboard', icon: LayoutDashboard, label: language === 'en' ? 'Dashboard' : 'ড্যাশবোর্ড' },
