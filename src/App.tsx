@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { auth } from './firebase';
+import { signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
 import { 
   Home, 
   LayoutDashboard, 
@@ -71,11 +73,7 @@ import {
 
 // --- Components ---
 
-const Sidebar = ({ activeTab, setActiveTab, isOpen, setIsOpen, language, setLanguage }: any) => {
-  useEffect(() => {
-    localStorage.clear();
-    sessionStorage.clear();
-  }, []);
+const Sidebar = ({ activeTab, setActiveTab, isOpen, setIsOpen, language, setLanguage, onLogout }: any) => {
   const menuItems = [
     { id: 'home', icon: Home, label: language === 'en' ? 'Home' : 'হোম' },
     { id: 'dashboard', icon: LayoutDashboard, label: language === 'en' ? 'Dashboard' : 'ড্যাশবোর্ড' },
@@ -165,7 +163,7 @@ const Sidebar = ({ activeTab, setActiveTab, isOpen, setIsOpen, language, setLang
                 </button>
               </div>
             </div>
-            <button className="w-full flex items-center gap-4 px-4 py-3 text-white/50 hover:text-red-400 transition-colors">
+            <button onClick={onLogout} className="w-full flex items-center gap-4 px-4 py-3 text-white/50 hover:text-red-400 transition-colors">
               <LogOut size={20} />
               <span className="font-medium">Logout</span>
             </button>
@@ -523,7 +521,7 @@ const Navigator = ({ warnings }: { warnings: string[] }) => {
   );
 };
 
-const StudentID = ({ performance }: { performance: any }) => {
+const StudentID = ({ performance, user }: { performance: any, user: FirebaseUser | null }) => {
   const avatars = [
     'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png', // Pikachu
     'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/4.png',  // Charmander
@@ -545,36 +543,38 @@ const StudentID = ({ performance }: { performance: any }) => {
             className="w-24 h-24 rounded-2xl bg-gradient-to-br from-blue-500/20 to-purple-600/20 p-2 border border-white/10"
           >
             <img 
-              src={avatars[avatarIndex]} 
-              alt="Pokemon Avatar" 
-              className="w-full h-full object-contain"
+              src={user?.photoURL || avatars[avatarIndex]} 
+              alt="Avatar" 
+              className="w-full h-full object-contain rounded-xl"
               referrerPolicy="no-referrer"
             />
           </motion.div>
-          <button 
-            onClick={() => setAvatarIndex((avatarIndex + 1) % avatars.length)}
-            className="absolute -bottom-2 -right-2 p-1.5 bg-blue-600 rounded-lg shadow-lg hover:bg-blue-500 transition-colors"
-          >
-            <User size={14} />
-          </button>
+          {!user?.photoURL && (
+            <button 
+              onClick={() => setAvatarIndex((avatarIndex + 1) % avatars.length)}
+              className="absolute -bottom-2 -right-2 p-1.5 bg-blue-600 rounded-lg shadow-lg hover:bg-blue-500 transition-colors"
+            >
+              <User size={14} />
+            </button>
+          )}
         </div>
         <div className="flex-1">
           <div className="flex justify-between items-start">
             <div>
-              <h3 className="text-xl font-bold">Hridita</h3>
-              <p className="text-white/50 text-xs font-mono uppercase tracking-widest">ID: SH-2026-042</p>
+              <h3 className="text-xl font-bold">{user?.displayName || 'Student'}</h3>
+              <p className="text-white/50 text-xs font-mono uppercase tracking-widest">ID: SH-NEW-001</p>
             </div>
             <div className="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-full text-[10px] font-bold uppercase tracking-widest">
-              Pro Student
+              New Student
             </div>
           </div>
           <div className="mt-4 space-y-2">
             <div className="flex justify-between text-[10px] font-bold text-white/30 uppercase">
               <span>XP Progress</span>
-              <span>750 / 1000</span>
+              <span>0 / 1000</span>
             </div>
             <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
-              <div className="w-[75%] h-full bg-gradient-to-r from-blue-500 to-purple-600" />
+              <div className="w-[0%] h-full bg-gradient-to-r from-blue-500 to-purple-600" />
             </div>
           </div>
           
@@ -620,7 +620,7 @@ const SpacedRepetition = () => {
   );
 };
 
-const LandingPage = ({ onStart }: { onStart: () => void }) => {
+const LandingPage = ({ onLogin }: { onLogin: () => void }) => {
   return (
     <motion.div 
       initial={{ opacity: 0 }}
@@ -639,6 +639,16 @@ const LandingPage = ({ onStart }: { onStart: () => void }) => {
           </motion.div>
           <h1 className="text-6xl font-bold tracking-tighter">Welcome to <span className="gradient-text">Studyholic</span></h1>
           <p className="text-xl text-white/50 max-w-2xl mx-auto">The ultimate AI-powered learning ecosystem designed specifically for HSC students in Bangladesh.</p>
+          
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={onLogin}
+            className="mt-8 px-8 py-4 bg-white text-black rounded-full font-bold text-lg shadow-xl shadow-white/10 hover:bg-gray-200 transition-colors flex items-center gap-3 mx-auto"
+          >
+            <img src="https://www.google.com/favicon.ico" alt="Google" className="w-6 h-6" />
+            Sign in with Google
+          </motion.button>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
@@ -667,10 +677,10 @@ const LandingPage = ({ onStart }: { onStart: () => void }) => {
           <h2 className="text-3xl font-bold">Ready to transform your studies?</h2>
           <p className="text-white/50">Join thousands of students and start your journey to success today.</p>
           <button 
-            onClick={onStart}
+            onClick={onLogin}
             className="px-12 py-4 bg-blue-600 rounded-2xl font-bold text-lg hover:bg-blue-500 transition-all shadow-xl shadow-blue-500/20"
           >
-            Get Started Now
+            Sign in with Google
           </button>
         </div>
       </div>
@@ -1363,6 +1373,8 @@ const CodingTab = () => {
 // --- Main App ---
 
 export default function App() {
+  const [user, setUser] = useState<FirebaseUser | null>(null);
+  const [authLoading, setAuthLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('home');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [language, setLanguage] = useState<'en' | 'bn'>(localStorage.getItem('sh_lang') as any || 'en');
@@ -1382,15 +1394,47 @@ export default function App() {
     return saved ? JSON.parse(saved) : [];
   });
   const [performance, setPerformance] = useState({
-    strongest: 'Physics',
-    weakest: 'Chemistry',
-    scores: { Physics: 85, Chemistry: 45, Math: 90, Biology: 75, ICT: 88, Bangla: 70, English: 82 }
+    strongest: '-',
+    weakest: '-',
+    scores: { Physics: 0, Chemistry: 0, Math: 0, Biology: 0, ICT: 0, Bangla: 0, English: 0 }
   });
   const [warnings, setWarnings] = useState<string[]>([]);
   const [kaKha, setKaKha] = useState<string | null>(null);
   const [collegePattern, setCollegePattern] = useState<string | null>(null);
   const [routine, setRoutine] = useState<string | null>(localStorage.getItem('sh_routine'));
   const [examDate, setExamDate] = useState(localStorage.getItem('sh_exam_date') || '');
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      setAuthLoading(false);
+      if (!currentUser) {
+        setShowLanding(true);
+      } else {
+        setShowLanding(false);
+      }
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const handleLogin = async () => {
+    try {
+      const provider = new GoogleAuthProvider();
+      await signInWithPopup(auth, provider);
+      localStorage.setItem('sh_visited', 'true');
+      setShowLanding(false);
+    } catch (error) {
+      console.error("Login failed", error);
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+    } catch (error) {
+      console.error("Logout failed", error);
+    }
+  };
 
   useEffect(() => {
     localStorage.setItem('sh_todos', JSON.stringify(todos));
@@ -1461,19 +1505,26 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-[#050505] text-white font-sans selection:bg-blue-500/30">
-      <AnimatePresence>
-        {showLanding && <LandingPage onStart={handleStartApp} />}
-      </AnimatePresence>
+      {authLoading ? (
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+        </div>
+      ) : (
+        <>
+          <AnimatePresence>
+            {showLanding && <LandingPage onLogin={handleLogin} />}
+          </AnimatePresence>
 
-      <div className="flex">
-        <Sidebar 
-          activeTab={activeTab} 
-          setActiveTab={setActiveTab} 
-          isOpen={isSidebarOpen} 
-          setIsOpen={setIsSidebarOpen}
-          language={language}
-          setLanguage={setLanguage}
-        />
+          <div className="flex">
+            <Sidebar 
+              activeTab={activeTab} 
+              setActiveTab={setActiveTab} 
+              isOpen={isSidebarOpen} 
+              setIsOpen={setIsSidebarOpen}
+              language={language}
+              setLanguage={setLanguage}
+              onLogout={handleLogout}
+            />
 
       <Navigator warnings={warnings} />
       
@@ -1488,25 +1539,25 @@ export default function App() {
           </button>
           <h1 className="text-xl font-bold tracking-tight">Study<span className="text-blue-400">holic</span></h1>
           <div className="w-10 h-10 rounded-full border border-white/10 overflow-hidden">
-            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png" alt="User" className="w-full h-full object-contain" />
+            <img src={user?.photoURL || "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png"} alt="User" className="w-full h-full object-contain" referrerPolicy="no-referrer" />
           </div>
         </div>
 
         <header className="hidden lg:flex justify-between items-center mb-12">
           <div>
-            <h2 className="text-3xl font-bold mb-2">Welcome back, <span className="gradient-text">Hridita</span>!</h2>
-            <p className="text-white/50">You've completed 75% of your weekly goal. Keep it up!</p>
+            <h2 className="text-3xl font-bold mb-2">Welcome back, <span className="gradient-text">{user?.displayName || 'Student'}</span>!</h2>
+            <p className="text-white/50">You've completed 0% of your weekly goal. Keep it up!</p>
           </div>
           <div className="flex items-center gap-4">
             <div className="text-right">
-              <p className="text-sm font-bold">Level 12</p>
+              <p className="text-sm font-bold">Level 1</p>
               <div className="w-32 h-2 bg-white/10 rounded-full mt-1 overflow-hidden">
-                <div className="w-[70%] h-full bg-blue-500" />
+                <div className="w-[0%] h-full bg-blue-500" />
               </div>
             </div>
             <div className="w-12 h-12 rounded-full border-2 border-blue-500 p-0.5">
               <img 
-                src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png" 
+                src={user?.photoURL || "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png"} 
                 alt="Avatar" 
                 className="w-full h-full rounded-full object-contain"
                 referrerPolicy="no-referrer"
@@ -1525,7 +1576,7 @@ export default function App() {
               className="grid grid-cols-1 lg:grid-cols-3 gap-8"
             >
               <div className="lg:col-span-2 space-y-8">
-                <StudentID performance={performance} />
+                <StudentID performance={performance} user={user} />
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <QuickAccessCard 
@@ -1552,8 +1603,8 @@ export default function App() {
                         <Award className="text-yellow-400" />
                         <h4 className="font-bold">Daily Streak</h4>
                       </div>
-                      <p className="text-3xl font-bold">12 Days</p>
-                      <p className="text-white/50 text-sm mt-1">Top 5% of students this week</p>
+                      <p className="text-3xl font-bold">0 Days</p>
+                      <p className="text-white/50 text-sm mt-1">Start learning to build a streak!</p>
                     </div>
                     <div className="glass-card p-6">
                       <div className="flex items-center gap-3 mb-4">
@@ -1820,20 +1871,20 @@ export default function App() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="glass-card p-6">
                   <h4 className="text-white/50 text-sm font-bold uppercase mb-2">Total Study Time</h4>
-                  <p className="text-4xl font-bold">142h</p>
+                  <p className="text-4xl font-bold">0h</p>
                   <p className="text-green-400 text-sm mt-2 flex items-center gap-1">
-                    <TrendingUp size={14} /> +12% from last week
+                    <TrendingUp size={14} /> Start studying!
                   </p>
                 </div>
                 <div className="glass-card p-6">
                   <h4 className="text-white/50 text-sm font-bold uppercase mb-2">Quiz Accuracy</h4>
-                  <p className="text-4xl font-bold">88%</p>
-                  <p className="text-blue-400 text-sm mt-2">Consistent performance</p>
+                  <p className="text-4xl font-bold">0%</p>
+                  <p className="text-blue-400 text-sm mt-2">Take quizzes to see accuracy</p>
                 </div>
                 <div className="glass-card p-6">
                   <h4 className="text-white/50 text-sm font-bold uppercase mb-2">Global Rank</h4>
-                  <p className="text-4xl font-bold">#1,245</p>
-                  <p className="text-purple-400 text-sm mt-2">Top 1% in Physics</p>
+                  <p className="text-4xl font-bold">Unranked</p>
+                  <p className="text-purple-400 text-sm mt-2">Complete tasks to rank up</p>
                 </div>
               </div>
 
@@ -1876,10 +1927,10 @@ export default function App() {
             >
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 {[
-                  { label: 'Total Study Time', value: '142h', color: 'text-blue-400' },
-                  { label: 'Notes Generated', value: '24', color: 'text-purple-400' },
-                  { label: 'Streak', value: '12 Days', color: 'text-orange-400' },
-                  { label: 'XP Points', value: '750', color: 'text-emerald-400' },
+                  { label: 'Total Study Time', value: '0h', color: 'text-blue-400' },
+                  { label: 'Notes Generated', value: '0', color: 'text-purple-400' },
+                  { label: 'Streak', value: '0 Days', color: 'text-orange-400' },
+                  { label: 'XP Points', value: '0', color: 'text-emerald-400' },
                 ].map((stat, i) => (
                   <div key={i} className="glass-card p-4">
                     <p className="text-[10px] font-bold text-white/30 uppercase tracking-widest mb-1">{stat.label}</p>
@@ -1940,18 +1991,18 @@ export default function App() {
                 <div className="space-y-6">
                   <div className="flex items-center gap-6">
                     <div className="w-20 h-20 rounded-2xl bg-blue-500/20 border border-white/10 flex items-center justify-center overflow-hidden">
-                      <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png" alt="Avatar" className="w-16 h-16 object-contain" />
+                      <img src={user?.photoURL || "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png"} alt="Avatar" className="w-full h-full object-contain" referrerPolicy="no-referrer" />
                     </div>
                     <button className="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-xl text-sm font-bold transition-colors">Change Avatar</button>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <label className="text-xs font-bold text-white/30 uppercase">Display Name</label>
-                      <input defaultValue="Hridita" className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-sm" />
+                      <input defaultValue={user?.displayName || "Student"} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-sm" />
                     </div>
                     <div className="space-y-2">
                       <label className="text-xs font-bold text-white/30 uppercase">Email</label>
-                      <input defaultValue="hridita@studyholic.com" className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-sm" />
+                      <input defaultValue={user?.email || "student@studyholic.com"} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-sm" disabled />
                     </div>
                   </div>
                 </div>
@@ -2009,13 +2060,15 @@ export default function App() {
         </AnimatePresence>
 
         <footer className="mt-20 pt-8 border-t border-white/10 text-center text-white/30 text-sm">
-          <p className="font-bold text-white/50 mb-1">Made by Hridita</p>
+          <p className="font-bold text-white/50 mb-1">Made by Hridita Datta</p>
           <p>© 2026 Studyholic • Version 2.1.0</p>
         </footer>
       </main>
       </div>
 
       <FloatingPikachu language={language} />
+      </>
+      )}
     </div>
   );
 }

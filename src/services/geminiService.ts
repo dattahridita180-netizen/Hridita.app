@@ -1,11 +1,12 @@
+/// <reference types="vite/client" />
 import { GoogleGenAI } from "@google/genai";
 
-const API_KEY = import.meta.env.GEMINI_API_KEY || "";
+const API_KEY = import.meta.env.VITE_GEMINI_API_KEY || "";
 const ai = new GoogleGenAI({ apiKey: API_KEY });
 
 export const generateStudyNote = async (subject: string, chapter: string, topic: string, language: string = 'en') => {
   const model = ai.models.generateContent({
-    model: "gemini-1.5-flash-latest",
+    model: "gemini-3-flash-preview",
     contents: `You are an expert HSC tutor. Please provide a detailed study note on the topic: '${topic}' from chapter '${chapter}' of '${subject}'.
     
     Language: ${language === 'bn' ? 'Bengali (with English terms in brackets)' : 'English'}
@@ -25,7 +26,7 @@ export const generateStudyNote = async (subject: string, chapter: string, topic:
 
 export const generateCQ = async (subject: string, chapter: string, topic: string, language: string = 'en') => {
   const model = ai.models.generateContent({
-    model: "gemini-1.5-flash-latest",
+    model: "gemini-3-flash-preview",
     contents: `Generate 2 Creative Questions (CQ) for HSC level on the topic: '${topic}' from chapter '${chapter}' of '${subject}'.
     
     Language: ${language === 'bn' ? 'Bengali' : 'English'}
@@ -41,7 +42,7 @@ export const generateCQ = async (subject: string, chapter: string, topic: string
 
 export const generateMCQ = async (subject: string, chapter: string, topic: string, language: string = 'en') => {
   const model = ai.models.generateContent({
-    model: "gemini-1.5-flash-latest",
+    model: "gemini-3-flash-preview",
     contents: `Generate 10 Multiple Choice Questions (MCQ) for HSC level on the topic: '${topic}' from chapter '${chapter}' of '${subject}'.
     
     Language: ${language === 'bn' ? 'Bengali' : 'English'}
@@ -54,7 +55,7 @@ export const generateMCQ = async (subject: string, chapter: string, topic: strin
 
 export const generateFlashcards = async (subject: string, chapter: string, topic: string, language: string = 'en') => {
   const model = ai.models.generateContent({
-    model: "gemini-1.5-flash-latest",
+    model: "gemini-3-flash-preview",
     contents: `Generate 5 Flashcards (Question on front, Answer on back) for HSC level on the topic: '${topic}' from chapter '${chapter}' of '${subject}'.
     
     Language: ${language === 'bn' ? 'Bengali' : 'English'}
@@ -69,7 +70,7 @@ export const generateFlashcards = async (subject: string, chapter: string, topic
 
 export const generateQuiz = async (subject: string, chapter: string, topic: string, language: string = 'en') => {
   const model = ai.models.generateContent({
-    model: "gemini-1.5-flash-latest",
+    model: "gemini-3-flash-preview",
     contents: `Generate a short mock test/quiz for HSC level on the topic: '${topic}' from chapter '${chapter}' of '${subject}'.
     
     Language: ${language === 'bn' ? 'Bengali' : 'English'}
@@ -82,7 +83,7 @@ export const generateQuiz = async (subject: string, chapter: string, topic: stri
 
 export const generateKaKha = async (subject: string, chapter: string, language: string = 'en') => {
   const model = ai.models.generateContent({
-    model: "gemini-1.5-flash-latest",
+    model: "gemini-3-flash-preview",
     contents: `Generate a list of important 'Ka' (Knowledge-based) and 'Kha' (Comprehension-based) questions and answers for HSC level for the chapter: '${chapter}' of '${subject}'.
     
     Language: ${language === 'bn' ? 'Bengali' : 'English'}
@@ -99,7 +100,7 @@ export const generateKaKha = async (subject: string, chapter: string, language: 
 
 export const analyzePerformance = async (scores: any, language: string = 'en') => {
   const model = ai.models.generateContent({
-    model: "gemini-1.5-flash-latest",
+    model: "gemini-3-flash-preview",
     contents: `Analyze this student's performance data: ${JSON.stringify(scores)}.
     Identify:
     1. Strongest subjects/skills.
@@ -115,7 +116,7 @@ export const analyzePerformance = async (scores: any, language: string = 'en') =
 
 export const predictVarsityChance = async (performance: any, language: string = 'en') => {
   const model = ai.models.generateContent({
-    model: "gemini-1.5-flash-latest",
+    model: "gemini-3-flash-preview",
     contents: `Based on this student's performance: ${JSON.stringify(performance)}, predict their chances for:
     - BUET/Engineering
     - Medical
@@ -131,7 +132,7 @@ export const predictVarsityChance = async (performance: any, language: string = 
 
 export const getCareerCounselling = async (data: { passion: string, hobby: string, mood: string, performance: any }, language: string = 'en') => {
   const model = ai.models.generateContent({
-    model: "gemini-1.5-flash-latest",
+    model: "gemini-3-flash-preview",
     contents: `Provide a career counselling session.
     Student Data:
     - Passion: ${data.passion}
@@ -149,7 +150,7 @@ export const getCareerCounselling = async (data: { passion: string, hobby: strin
 
 export const generateAIPersonalizedRoutine = async (examDate: string, currentProgress: any, dailyCommitment: string, language: string = 'en') => {
   const model = ai.models.generateContent({
-    model: "gemini-1.5-flash-latest",
+    model: "gemini-3-flash-preview",
     contents: `Create a personalized HSC study routine.
     - Exam Date: ${examDate}
     - Current Progress: ${JSON.stringify(currentProgress)}
@@ -165,7 +166,7 @@ export const generateAIPersonalizedRoutine = async (examDate: string, currentPro
 
 export const getCollegeQuestionPattern = async (collegeName: string, subject: string, language: string = 'en') => {
   const model = ai.models.generateContent({
-    model: "gemini-1.5-flash-latest",
+    model: "gemini-3-flash-preview",
     contents: `Provide information about the question pattern and frequently asked questions for '${subject}' at '${collegeName}' (HSC level in Bangladesh).
     Include tips on what the teachers there usually focus on.
     
@@ -177,7 +178,7 @@ export const getCollegeQuestionPattern = async (collegeName: string, subject: st
 
 export const generateSpecialExamNote = async (subject: string, chapter: string, language: string = 'en') => {
   const model = ai.models.generateContent({
-    model: "gemini-1.5-flash-latest",
+    model: "gemini-3-flash-preview",
     contents: `Generate a 'Special Common Note' for the chapter: '${chapter}' of '${subject}' for HSC exams.
     Focus on topics that are most likely to appear in the board exams. 
     
@@ -195,7 +196,7 @@ export const generateSpecialExamNote = async (subject: string, chapter: string, 
 
 export const getBoardQuestions = async (subject: string, board: string, year: string, language: string = 'en') => {
   const model = ai.models.generateContent({
-    model: "gemini-1.5-flash-latest",
+    model: "gemini-3-flash-preview",
     contents: `Provide a list of important board questions for '${subject}' from '${board}' board for the year '${year}' (HSC level).
     If exact questions are not available, provide highly similar model questions based on that year's pattern.
     
@@ -207,7 +208,7 @@ export const getBoardQuestions = async (subject: string, board: string, year: st
 
 export const getLanguageLabContent = async (language: string, type: 'speaking' | 'writing' | 'listening' | 'reading') => {
   const model = ai.models.generateContent({
-    model: "gemini-1.5-flash-latest",
+    model: "gemini-3-flash-preview",
     contents: `Generate a ${type} exercise for learning ${language}.
     - If speaking: Provide a dialogue script and pronunciation tips.
     - If writing: Provide a prompt and a model answer.
@@ -221,7 +222,7 @@ export const getLanguageLabContent = async (language: string, type: 'speaking' |
 
 export const startFeynmanTechnique = async (topic: string, language: string = 'en') => {
   const model = ai.models.generateContent({
-    model: "gemini-1.5-flash-latest",
+    model: "gemini-3-flash-preview",
     contents: `You are an AI student who wants to learn about '${topic}'. 
     Ask the user (the teacher) a specific, slightly challenging question about '${topic}' to see if they can explain it simply.
     Your tone should be curious and respectful.
@@ -234,7 +235,7 @@ export const startFeynmanTechnique = async (topic: string, language: string = 'e
 
 export const evaluateFeynmanExplanation = async (topic: string, explanation: string, language: string = 'en') => {
   const model = ai.models.generateContent({
-    model: "gemini-1.5-flash-latest",
+    model: "gemini-3-flash-preview",
     contents: `The student (user) explained '${topic}' as follows: '${explanation}'.
     As an AI tutor, evaluate if this explanation is accurate, simple, and clear (Feynman Technique).
     If it's good, praise them. If it's missing something or too complex, ask a follow-up question to help them simplify it.
@@ -247,7 +248,7 @@ export const evaluateFeynmanExplanation = async (topic: string, explanation: str
 
 export const getAITutorResponse = async (message: string, context: string, history: any[], language: string = 'en') => {
   const model = ai.models.generateContent({
-    model: "gemini-1.5-flash-latest",
+    model: "gemini-3-flash-preview",
     contents: `You are 'Pikachu', a friendly and highly intelligent AI Study Tutor for HSC students in Bangladesh. 
     Current context: ${context}
     Chat History: ${JSON.stringify(history)}
@@ -264,17 +265,20 @@ export const getAITutorResponse = async (message: string, context: string, histo
 
 export const getPrivateTutorResponse = async (message: string, history: any[], language: string = 'en') => {
   const model = ai.models.generateContent({
-    model: "gemini-1.5-flash-latest",
+    model: "gemini-3-flash-preview",
     contents: `You are 'Master Pika', a dedicated private tutor for HSC students. 
-    Your goal is to teach the student step-by-step.
+    Your goal is to teach the student step-by-step from the absolute basics.
     
     Language Preference: ${language === 'bn' ? 'Bengali (ধীরে ধীরে এবং ধরে ধরে শিখানো)' : 'English (Slow and steady teaching)'}
     
     Guidelines:
-    1. Break down complex topics into small, digestible parts.
-    2. After explaining a small part, ask the student a question to check their understanding.
-    3. Do not move to the next part until the student understands the current one.
-    4. Be extremely patient and encouraging.
+    1. Always start from the basic theory and core concepts. Do not skip the fundamentals.
+    2. Clearly explain all relevant formulas, their derivations (if necessary), and what each variable means.
+    3. Break down complex topics into small, digestible parts.
+    4. Provide simple, real-life examples to make the theory easy to understand.
+    5. After explaining a small part, ask the student a question to check their understanding.
+    6. Do not move to the next part until the student understands the current one.
+    7. Be extremely patient, encouraging, and supportive.
     
     Chat History: ${JSON.stringify(history)}
     User message: ${message}`,
@@ -286,7 +290,7 @@ export const getPrivateTutorResponse = async (message: string, history: any[], l
 
 export const solveMathProblem = async (problem: string) => {
   const model = ai.models.generateContent({
-    model: "gemini-1.5-flash-latest",
+    model: "gemini-3-flash-preview",
     contents: `Solve this HSC level math problem step-by-step in Bengali:
     Problem: ${problem}
     
