@@ -4,6 +4,9 @@ import path from 'path';
 import {defineConfig, loadEnv} from 'vite';
 
 export default defineConfig(({mode}) => {
+  return {
+    base: '/Hridita.app/', // এই লাইনটি যোগ করুন
+    plugins: [react(), tailwindcss()]
   const env = loadEnv(mode, '.', '');
   return {
     plugins: [react(), tailwindcss()],
